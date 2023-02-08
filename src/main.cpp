@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "p6/p6.h"
 #define DOCTEST_CONFIG_IMPLEMENT
+#include <vector>
 #include "doctest/doctest.h"
 
 int main(int argc, char* argv[])
@@ -15,7 +16,7 @@ int main(int argc, char* argv[])
     }
 
     // Actual app
-    auto ctx = p6::Context{{.title = "Simple-p6-Setup"}};
+    auto ctx = p6::Context{{.title = "progObjet"}};
     ctx.maximize_window();
 
     // Declare your infinite update loop.
@@ -29,4 +30,6 @@ int main(int argc, char* argv[])
 
     // Should be done last. It starts the infinite loop.
     ctx.start();
+
+    std::vector<int> v{};
 }
