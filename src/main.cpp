@@ -1,9 +1,11 @@
 #include <stdlib.h>
+#include <vcruntime.h>
+#include "glm/fwd.hpp"
 #include "p6/p6.h"
 #define DOCTEST_CONFIG_IMPLEMENT
 #include <random>
 #include <vector>
-#include "Square.hpp"
+#include "boids/Boid.hpp"
 #include "doctest/doctest.h"
 
 int main(int argc, char* argv[])
@@ -21,14 +23,16 @@ int main(int argc, char* argv[])
     auto ctx = p6::Context{{.title = "progObjet"}};
     ctx.maximize_window();
 
-    p6::Angle rotation = 0.011_turn;
-    ctx.mouse_scrolled = [&](p6::MouseScroll e) {
-        rotation += e.dy * 0.025_turn;
-    };
-
-    Square s1(0.5, 0.5);
-
     // Declare your infinite update loop.
+    std::vector<Boid> boids;
+
+    for (size_t i = 0; i < 10; i++)
+    {
+        glm::vec2 p{p6::random::number(-1.5, 1.5), p6::random::number(-2, 2)};
+        Boid      b(p, 0.1);
+        boids.push_back(b);
+    }
+
     ctx.update = [&]() {
         ctx.background(p6::NamedColor::Blue);
         // ctx.circle(
@@ -39,13 +43,15 @@ int main(int argc, char* argv[])
         //     p6::TopLeftCorner{{p6::random::number(-1, 1), p6::random::number(-1, 1)}},
         //     p6::Radius{0.3f}
         // );
-        s1.draw(ctx);
+        for (auto& boid : boids)
+        {
+            boid.draw(ctx);
+            boid.update();
+        }
     };
 
     // Should be done last. It starts the infinite loop.
     ctx.start();
-
-    std::vector<int> v{};
 };
 
 void squares(){
