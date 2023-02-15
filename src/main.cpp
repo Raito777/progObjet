@@ -25,11 +25,12 @@ int main(int argc, char* argv[])
 
     // Declare your infinite update loop.
     std::vector<Boid> boids;
+    Boid              c({0, 0}, 0.1f);
 
     for (size_t i = 0; i < 10; i++)
     {
         glm::vec2 p{p6::random::number(-1.5, 1.5), p6::random::number(-2, 2)};
-        Boid      b(p, 0.1);
+        Boid      b(p, 0.1f);
         boids.push_back(b);
     }
 
@@ -48,6 +49,7 @@ int main(int argc, char* argv[])
             boid.draw(ctx);
             boid.update();
         }
+        c.draw(ctx);
     };
 
     // Should be done last. It starts the infinite loop.

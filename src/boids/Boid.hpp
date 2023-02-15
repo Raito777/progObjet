@@ -8,13 +8,13 @@
 
 class Boid {
 private:
-    glm::vec2 m_position;
-    glm::vec2 m_direction{0.01, 0.01};
-    float     m_size  = 0.2f;
-    float     m_speed = 1;
+    glm::vec2  m_position;
+    glm::vec2  m_direction{0.01, 0.01};
+    p6::Radius m_size  = 0.2f;
+    float      m_speed = 1;
 
 public:
-    explicit Boid(const glm::vec2& position, const float& size)
+    explicit Boid(const glm::vec2& position, const p6::Radius& size)
         : m_position(position), m_size(size){};
 
     glm::vec2 getPosition()
@@ -41,15 +41,16 @@ public:
         //     p6::TopLeftCorner{{this->m_position.x, this->m_position.y}},
         //     p6::Radius{0.3f}
         // );
-        p6::Point2D p1(this->m_position.x, this->m_position.y + this->m_size);
-        p6::Point2D p2(this->m_position.x - this->m_size, this->m_position.y - this->m_size);
-        p6::Point2D p3(this->m_position.x + this->m_size, this->m_position.y - this->m_size);
+        // p6::Point2D p1(this->m_position.x, this->m_position.y + this->m_size);
+        // p6::Point2D p2(this->m_position.x - this->m_size, this->m_position.y - this->m_size);
+        // p6::Point2D p3(this->m_position.x + this->m_size, this->m_position.y - this->m_size);
 
-        ctx.triangle(p1, p2, p3);
+        // ctx.triangle(p1, p2, p3);
+        ctx.equilateral_triangle(this->m_position, this->m_size, p6::Angle(this->m_direction));
     }
     void update()
     {
         this->m_position += this->m_direction;
-        if (this->m_position.x)
+        // if (this->m_position.x)
     }
 };
