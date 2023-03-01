@@ -25,31 +25,21 @@ int main(int argc, char* argv[])
 
     // Declare your infinite update loop.
     std::vector<Boid> boids;
-    Boid              c({0, 0}, 0.1f);
 
-    for (size_t i = 0; i < 10; i++)
+    for (size_t i = 0; i < 20; i++)
     {
-        glm::vec2 p{p6::random::number(-1.5, 1.5), p6::random::number(-2, 2)};
-        Boid      b(p, 0.1f);
+        glm::vec2 positions{p6::random::number(-ctx.aspect_ratio(), ctx.aspect_ratio()), p6::random::number(-1, 1)};
+        Boid      b(positions, 0.1f);
+        b.setDirection(glm::vec2(p6::random::number(-0.01f, 0.01f), p6::random::number(-0.01f, 0.01f)));
         boids.push_back(b);
     }
 
     ctx.update = [&]() {
         ctx.background(p6::NamedColor::Blue);
-        // ctx.circle(
-        //     p6::Center{ctx.mouse()},
-        //     p6::Radius{0.2f}
-        // );
-        // ctx.square(
-        //     p6::TopLeftCorner{{p6::random::number(-1, 1), p6::random::number(-1, 1)}},
-        //     p6::Radius{0.3f}
-        // );
         for (auto& boid : boids)
         {
-            boid.draw(ctx);
-            boid.update();
+            boid.update(ctx, boids);
         }
-        c.draw(ctx);
     };
 
     // Should be done last. It starts the infinite loop.
