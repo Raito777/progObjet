@@ -26,16 +26,17 @@ int main(int argc, char* argv[])
     // Declare your infinite update loop.
     std::vector<Boid> boids;
 
-    for (size_t i = 0; i < 20; i++)
+    for (size_t i = 0; i < 64; i++)
     {
         glm::vec2 positions{p6::random::number(-ctx.aspect_ratio(), ctx.aspect_ratio()), p6::random::number(-1, 1)};
-        Boid      b(positions, 0.1f);
-        b.setDirection(glm::vec2(p6::random::number(-0.01f, 0.01f), p6::random::number(-0.01f, 0.01f)));
+        Boid      b(positions, 0.02f);
+        b.setDirection(glm::vec2(p6::random::number(-1.f, 1.f), p6::random::number(-1.f, 1.f)));
         boids.push_back(b);
     }
 
     ctx.update = [&]() {
-        ctx.background(p6::NamedColor::Blue);
+        ctx.background({0.18f, 0.18f, 0.18f});
+
         for (auto& boid : boids)
         {
             boid.update(ctx, boids);
