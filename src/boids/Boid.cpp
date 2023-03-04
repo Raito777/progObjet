@@ -22,15 +22,17 @@ void Boid::update(p6::Context& ctx, std::vector<Boid>& boids)
 
 void Boid::draw(p6::Context& ctx)
 {
-    // ctx.fill = {0.f, 0.f, 0.f, 0.1f};
-    // // dessine le cercle de detection
-    // ctx.use_stroke = false;
-    // ctx.circle(this->m_position, p6::Radius{this->m_detectionRadius});
+    ctx.fill = {0.f, 0.f, 0.f, 0.1f};
+    // dessine le cercle de detection
+    ctx.use_stroke = false;
+    ctx.circle(this->m_position, p6::Radius{this->m_detectionRadius});
 
-    // // dessine le cercle de collision
-    // ctx.use_stroke    = true;
-    // ctx.stroke_weight = 0.003f;
-    // ctx.circle(this->m_position, p6::Radius{this->m_collisionTolerance});
+    // dessine le cercle de collision
+    ctx.use_stroke    = true;
+    ctx.stroke        = {0.0f, 0.0f, 0.0f};
+    ctx.fill          = {0.f, 0.f, 0.f, 0.0f};
+    ctx.stroke_weight = 0.003f;
+    ctx.circle(this->m_position, p6::Radius{this->m_collisionTolerance});
 
     ctx.stroke_weight = 0.005f;
 

@@ -43,6 +43,26 @@ public:
         this->m_speed = speed;
     }
 
+    void setIndependance(int independance)
+    {
+        this->m_independance = independance;
+    }
+
+    void setDetectionRadius(float radius)
+    {
+        this->m_detectionRadius = this->m_size + radius;
+    }
+
+    void setDeviationStrength(float strength)
+    {
+        this->m_deviationStrength = p6::random::number(0.1f, strength);
+    }
+
+    void setCollisionTolerance(float tolerance)
+    {
+        this->m_collisionTolerance = tolerance;
+    }
+
     void setDirection(glm::vec2 direction)
     {
         this->m_direction = direction;
