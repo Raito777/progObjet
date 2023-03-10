@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
     for (size_t i = 0; i < 12; i++)
     {
         glm::vec2 positions{p6::random::number(-ctx.aspect_ratio(), ctx.aspect_ratio()), p6::random::number(-1, 1)};
-        Boid      b(positions, 0.02f);
+        Boid      b(positions, 0.04f);
         b.setDirection(glm::vec2(p6::random::number(-1.f, 1.f), p6::random::number(-1.f, 1.f)));
         boids.push_back(b);
     }
@@ -39,6 +39,8 @@ int main(int argc, char* argv[])
     float deviationStrength = 1.f;
     float detectionRadius   = 0.05f;
     float avoidance         = 0.0250f;
+
+    p6::Image ship = p6::load_image("C:/Users/rallus/Desktop/S4/progObjet/src/ship0.png");
 
     ctx.update = [&]() {
         ctx.background({0.18f, 0.18f, 0.18f});
@@ -57,7 +59,7 @@ int main(int argc, char* argv[])
 
         if (ctx.mouse_button_is_pressed(p6::Button::Left))
         {
-            Boid b(ctx.mouse(), 0.02f);
+            Boid b(ctx.mouse(), 0.04f);
             b.setDirection(glm::vec2(p6::random::number(-1.f, 1.f), p6::random::number(-1.f, 1.f)));
             boids.push_back(b);
         }
@@ -70,7 +72,7 @@ int main(int argc, char* argv[])
             boid.setIndependance(boidsIndependance);
             boid.setCollisionTolerance(avoidance);
 
-            boid.update(ctx, boids);
+            boid.update(ctx, boids, ship);
         }
     };
 

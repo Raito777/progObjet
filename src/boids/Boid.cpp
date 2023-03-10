@@ -6,21 +6,21 @@
 #include "glm/geometric.hpp"
 #include "p6/p6.h"
 
-void Boid::update(p6::Context& ctx, std::vector<Boid>& boids)
+void Boid::update(p6::Context& ctx, std::vector<Boid>& boids, p6::Image& ship)
 {
     moove(ctx);
     checkNeighbors(boids);
     calculateDirection();
     checkBorders(ctx);
     checkCollisions();
-    draw(ctx);
+    draw(ctx, ship);
 
     // il faut bien check les collisions à la fin !
 
     this->neighbors.clear();
 }
 
-void Boid::draw(p6::Context& ctx)
+void Boid::draw(p6::Context& ctx, p6::Image& ship)
 {
     ctx.fill = {0.f, 0.f, 0.f, 0.1f};
     // dessine le cercle de detection
@@ -51,7 +51,10 @@ void Boid::draw(p6::Context& ctx)
     p6::Point2D p2(-this->m_size, -this->m_size);
     p6::Point2D p3(this->m_size * 1.5, 0);
 
-    ctx.triangle(p1, p2, p3, this->m_position, p6::Angle(this->m_direction));
+    // ctx.triangle(p1, p2, p3, this->m_position, p6::Angle(this->m_direction));
+    p6::Radii  radii(glm::vec2(this->m_size, this->m_size));
+    p6::Center center(this->m_position);
+    ctx.image(ship, center, radii, (p6::Angle(this->m_direction) - 0.25_turn));
 
     // ctx.equilateral_triangle(this->m_position, this->m_size, p6::Angle(this->m_direction));
 }

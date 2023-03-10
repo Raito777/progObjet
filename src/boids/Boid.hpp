@@ -68,11 +68,11 @@ public:
         this->m_direction = direction;
     }
 
-    void draw(p6::Context& ctx);
+    void draw(p6::Context& ctx, p6::Image& ship);
 
     void moove(p6::Context& ctx);
 
-    void update(p6::Context& ctx, std::vector<Boid>& boids);
+    void update(p6::Context& ctx, std::vector<Boid>& boids, p6::Image& ship);
 
     void checkBorders(p6::Context& ctx);
 
