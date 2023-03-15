@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <vcruntime.h>
 #include "glm/fwd.hpp"
+#include "imgui.h"
 #include "p6/p6.h"
 #define DOCTEST_CONFIG_IMPLEMENT
 #include <random>
@@ -37,8 +38,8 @@ int main(int argc, char* argv[])
     int   boidsIndependance = 10;
     float boidsSpeed        = 0.6f;
     float deviationStrength = 1.f;
-    float detectionRadius   = 0.05f;
-    float avoidance         = 0.0250f;
+    float detectionRadius   = 0.1f;
+    float avoidance         = 0.0450f;
 
     p6::Image ship = p6::load_image("C:/Users/rallus/Desktop/S4/progObjet/src/ship0.png");
 
@@ -57,7 +58,7 @@ int main(int argc, char* argv[])
         // It is very useful to discover all the widgets available in ImGui
         ImGui::ShowDemoWindow();
 
-        if (ctx.mouse_button_is_pressed(p6::Button::Left))
+        if (ctx.mouse_button_is_pressed(p6::Button::Left) && !ImGui::GetIO().WantCaptureMouse)
         {
             Boid b(ctx.mouse(), 0.04f);
             b.setDirection(glm::vec2(p6::random::number(-1.f, 1.f), p6::random::number(-1.f, 1.f)));

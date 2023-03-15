@@ -8,8 +8,8 @@
 
 void Boid::update(p6::Context& ctx, std::vector<Boid>& boids, p6::Image& ship)
 {
-    moove(ctx);
     checkNeighbors(boids);
+    moove(ctx);
     calculateDirection();
     checkBorders(ctx);
     checkCollisions();
@@ -22,10 +22,11 @@ void Boid::update(p6::Context& ctx, std::vector<Boid>& boids, p6::Image& ship)
 
 void Boid::draw(p6::Context& ctx, p6::Image& ship)
 {
+    const auto sg1 = ctx.transform_scope_guard();
+
     ctx.fill = {0.f, 0.f, 0.f, 0.1f};
     // dessine le cercle de detection
     ctx.use_stroke = false;
-    ctx.circle(this->m_position, p6::Radius{this->m_detectionRadius});
 
     // dessine le cercle de collision
     ctx.use_stroke    = true;
@@ -34,19 +35,20 @@ void Boid::draw(p6::Context& ctx, p6::Image& ship)
     ctx.stroke_weight = 0.003f;
     ctx.circle(this->m_position, p6::Radius{this->m_collisionTolerance});
 
-    ctx.stroke_weight = 0.005f;
+    ctx.push_transform(); // Push 1
 
-    ctx.use_stroke = true;
-    if (this->neighbors.size() > 1)
+    ctx.stroke_weight = 0.005f;
+    ctx.use_stroke    = false;
+    if (!this->neighbors.empty())
     {
-        ctx.stroke = {0.f, 0.7f, 0.0f};
-        ctx.fill   = {0.f, 0.7f, 0.0f, 0.5f};
+        ctx.fill = {0.f, 0.7f, 0.0f, 0.1f};
     }
     else
     {
-        ctx.stroke = {0.7f, 0.0f, 0.0f};
-        ctx.fill   = {0.7f, 0.f, 0.f, 0.5f};
+        ctx.fill = {0.7f, 0.f, 0.f, 0.1f};
     }
+    ctx.circle(this->m_position, p6::Radius{this->m_detectionRadius});
+
     p6::Point2D p1(-this->m_size, this->m_size);
     p6::Point2D p2(-this->m_size, -this->m_size);
     p6::Point2D p3(this->m_size * 1.5, 0);
@@ -56,6 +58,8 @@ void Boid::draw(p6::Context& ctx, p6::Image& ship)
     p6::Center center(this->m_position);
     ctx.image(ship, center, radii, (p6::Angle(this->m_direction) - 0.25_turn));
 
+    ctx.pop_transform(); // Goes back to the Push 1, i.e. undoes the `translate()`
+
     // ctx.equilateral_triangle(this->m_position, this->m_size, p6::Angle(this->m_direction));
 }
 
@@ -63,33 +67,33 @@ void Boid::moove(p6::Context& ctx)
 {
     // Calculate the current angle based on the current position
     // float angle = glm::radians(100 * sin(100 * this->m_position.y));
-    float angle = glm::radians(20.0f) * sin(ctx.delta_time());
+    // float angle = glm::radians(20.0f) * sin(ctx.delta_time());
 
-    glm::mat2 rotationMatrix(glm::cos(angle), -glm::sin(angle), glm::sin(angle), glm::cos(angle));
+    // glm::mat2 rotationMatrix(glm::cos(angle), -glm::sin(angle), glm::sin(angle), glm::cos(angle));
 
     // Calculate the new direction based on the angle
     // this->m_direction = glm::normalize(glm::vec2(glm::cos(angle), glm::sin(angle)));
 
-    this->m_position += rotationMatrix * this->m_direction * ctx.delta_time() * this->m_speed;
+    this->m_position += this->m_direction * ctx.delta_time() * this->m_speed;
 }
 
 void Boid::checkBorders(p6::Context& ctx)
 {
-    if (this->m_position.x + this->m_size > ctx.aspect_ratio())
+    if (this->m_position.x + this->m_size > ctx.aspect_ratio() - this->m_borderWidth)
     {
-        this->m_direction.x = -this->m_direction.x;
+        this->m_direction.x += -this->m_borderStrength;
     }
-    if (this->m_position.y + this->m_size > 1)
+    if (this->m_position.y + this->m_size > 1 - this->m_borderWidth)
     {
-        this->m_direction.y = -this->m_direction.y;
+        this->m_direction.y += -this->m_borderStrength;
     }
-    if (this->m_position.x - this->m_size < -ctx.aspect_ratio())
+    if (this->m_position.x - this->m_size < -ctx.aspect_ratio() + this->m_borderWidth)
     {
-        this->m_direction.x = -this->m_direction.x;
+        this->m_direction.x += this->m_borderStrength;
     }
-    if (this->m_position.y - this->m_size < -1)
+    if (this->m_position.y - this->m_size < -1 + this->m_borderWidth)
     {
-        this->m_direction.y = -this->m_direction.y;
+        this->m_direction.y += this->m_borderStrength;
     }
     // if (this->m_position.x > ctx.aspect_ratio() + this->m_size)
     // {
@@ -113,7 +117,7 @@ void Boid::checkNeighbors(std::vector<Boid>& boids)
 {
     for (auto& boid : boids)
     {
-        if (glm::distance(this->m_position, boid.m_position) < this->m_detectionRadius + boid.m_detectionRadius)
+        if (&boid != this && glm::distance(this->m_position, boid.m_position) < this->m_detectionRadius + boid.m_detectionRadius)
         {
             this->neighbors.push_back(boid);
         }
@@ -131,7 +135,10 @@ void Boid::calculateDirection()
     {
         newDirection += this->m_direction;
     }
-    newDirection /= static_cast<float>(this->neighbors.size());
+    if (this->neighbors.size() != 0)
+    {
+        newDirection /= static_cast<float>(this->neighbors.size());
+    }
 
     float     deviation = p6::random::number(0.f, this->m_deviationStrength); // adjust this value to control the amount of randomness
     glm::vec2 randomDeviation(p6::random::number(-deviation, deviation), p6::random::number(-deviation, deviation));
@@ -146,28 +153,21 @@ void Boid::calculateDirection()
 void Boid::checkCollisions()
 {
     std::vector<Boid> collisions;
-    glm::vec2         directionSum(0.0f, 0.0f);
+    glm::vec2         totalForce(0.0f, 0.0f);
     for (auto& boid : this->neighbors)
     {
         float distance = glm::distance(this->m_position, boid.m_position);
-        if ((distance < (this->m_size + this->m_collisionTolerance) && glm::distance(this->m_position, boid.m_position) != 0))
-        {
-            // le prob c'est que quand deux boids se chevauchent completement, ils ne se sépareront jamais
-            // on envoit le boid à l'opposé
-            glm::vec2 diff = this->m_position - boid.m_position;
-            diff           = glm::normalize(diff);
-            diff /= distance; // Weight by distance
 
-            directionSum += diff;
-
-            collisions.push_back(boid);
-        }
+        // le prob c'est que quand deux boids se chevauchent completement, ils ne se sépareront jamais
+        // on envoit le boid à l'opposé
+        totalForce += (this->m_position - boid.m_position) / (distance * 15.0f);
+        collisions.push_back(boid);
     }
 
     if (!collisions.empty())
     {
-        directionSum /= static_cast<float>(collisions.size());
+        totalForce /= static_cast<float>(collisions.size());
         // Choisir une nouvelle direction aléatoire
-        this->m_direction = glm::normalize(glm::mix(this->m_direction, directionSum, 0.5f));
+        this->m_direction += totalForce;
     }
 }

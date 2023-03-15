@@ -14,10 +14,11 @@ private:
     float             m_size               = 0.2f;
     float             m_speed              = 0.6f;
     float             m_detectionRadius    = this->m_size + 0.05f;
-    float             m_borderStrength     = 0.01f;
+    float             m_borderStrength     = 0.1f;
     float             m_collisionTolerance = this->m_size + 0.015f;
     int               m_independance       = 10;
     float             m_deviationStrength  = p6::random::number(0.1f, 2.f);
+    float             m_borderWidth        = 0.2f;
     std::vector<Boid> neighbors;
 
 public:
