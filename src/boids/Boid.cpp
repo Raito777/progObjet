@@ -28,17 +28,8 @@ void Boid::draw(p6::Context& ctx, p6::Image& ship)
     // dessine le cercle de detection
     ctx.use_stroke = false;
 
-    // dessine le cercle de collision
-    ctx.use_stroke    = true;
-    ctx.stroke        = {0.0f, 0.0f, 0.0f};
-    ctx.fill          = {0.f, 0.f, 0.f, 0.0f};
-    ctx.stroke_weight = 0.003f;
-    ctx.circle(this->m_position, p6::Radius{this->m_collisionTolerance});
-
     ctx.push_transform(); // Push 1
 
-    ctx.stroke_weight = 0.005f;
-    ctx.use_stroke    = false;
     if (!this->neighbors.empty())
     {
         ctx.fill = {0.f, 0.7f, 0.0f, 0.1f};
@@ -140,9 +131,9 @@ void Boid::calculateDirection()
         newDirection /= static_cast<float>(this->neighbors.size());
     }
 
-    float     deviation = p6::random::number(0.f, this->m_deviationStrength); // adjust this value to control the amount of randomness
-    glm::vec2 randomDeviation(p6::random::number(-deviation, deviation), p6::random::number(-deviation, deviation));
-    newDirection += randomDeviation;
+    // float     deviation = p6::random::number(0.f, this->m_deviationStrength); // adjust this value to control the amount of randomness
+    // glm::vec2 randomDeviation(p6::random::number(-deviation, deviation), p6::random::number(-deviation, deviation));
+    // newDirection += randomDeviation;
 
     // normalize the new direction vector
     newDirection = glm::normalize(newDirection);
@@ -160,7 +151,7 @@ void Boid::checkCollisions()
 
         // le prob c'est que quand deux boids se chevauchent completement, ils ne se sépareront jamais
         // on envoit le boid à l'opposé
-        totalForce += (this->m_position - boid.m_position) / (distance * 15.0f);
+        totalForce += (this->m_position - boid.m_position) / (distance * this->m_avoidance);
         collisions.push_back(boid);
     }
 

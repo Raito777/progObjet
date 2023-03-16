@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
     float boidsSpeed        = 0.6f;
     float deviationStrength = 1.f;
     float detectionRadius   = 0.1f;
-    float avoidance         = 0.0450f;
+    float avoidance         = 15.f;
 
     p6::Image ship = p6::load_image("C:/Users/rallus/Desktop/S4/progObjet/src/ship0.png");
 
@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
         ImGui::SliderInt("Independance", &boidsIndependance, 5, 100);
         ImGui::SliderFloat("Detection radius", &detectionRadius, 0.01f, 0.5f);
         ImGui::SliderFloat("Deviation", &deviationStrength, 0.1f, 5.f);
-        ImGui::SliderFloat("Avoidance", &avoidance, 0.005f, 0.5f);
+        ImGui::SliderFloat("Avoidance", &avoidance, 5.f, 40.f);
 
         ImGui::End();
         // Show the official ImGui demo window
@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
             boid.setSpeed(boidsSpeed);
             boid.setDetectionRadius(detectionRadius);
             boid.setIndependance(boidsIndependance);
-            boid.setCollisionTolerance(avoidance);
+            boid.setAvoidance(avoidance);
 
             boid.update(ctx, boids, ship);
         }
