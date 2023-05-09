@@ -24,7 +24,6 @@ int main(int argc, char* argv[])
     auto ctx = p6::Context{{.title = "progObjet"}};
     ctx.maximize_window();
 
-    // Declare your infinite update loop.
     std::vector<Boid> boids;
 
     for (size_t i = 0; i < 12; i++)
@@ -41,7 +40,9 @@ int main(int argc, char* argv[])
     float detectionRadius   = 0.1f;
     float avoidance         = 15.f;
 
-    p6::Image ship = p6::load_image("C:/Users/rallus/Desktop/S4/progObjet/src/ship0.png");
+    p6::Image ship = p6::load_image("./assets/ship0.png");
+
+    // Declare your infinite update loop.
 
     ctx.update = [&]() {
         ctx.background({0.18f, 0.18f, 0.18f});

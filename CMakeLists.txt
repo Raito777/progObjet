@@ -40,6 +40,8 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(doctest)
 target_link_libraries(${PROJECT_NAME} PRIVATE doctest::doctest)
 
+file(COPY assets DESTINATION /)
+
 # ---Add p6 library---
 add_subdirectory(lib/p6)
 target_link_libraries(${PROJECT_NAME} PRIVATE p6::p6)
